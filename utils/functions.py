@@ -58,7 +58,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None):
         # drop duplicates
         df_result = df_original.drop_duplicates().reset_index(drop=True)
 
-        # delete minutes and seconds
+        # delete minutes and seconds from the timestamps
         def del_seconds_minutes(timestamp):
             return timestamp.replace(second=0, minute=0)
         df_result["timestamp"] = df_result["timestamp"].map(del_seconds_minutes)
@@ -138,8 +138,10 @@ def generate_df_by_time_section(time_section="hour", save_path=None):
             # retrieve the timestamp for the mondays of every week
             df_tmp_2 = df_result[["year", "week", "timestamp"]].groupby(by=["year", "week"], as_index=False).min()
 
+            # add the timestamps to df_tmp_1
             df_tmp_1["timestamp"] = df_tmp_2["timestamp"]
 
+            # reorganise the columns
             df_result = df_tmp_1[["timestamp", "year", "week", "coal", "nuclear", "wind", "hydro", "solar"]]
 
         elif time_section == "month":
