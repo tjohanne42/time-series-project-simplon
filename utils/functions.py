@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from pathlib import Path
-from datetime import date, datetime
+# from pathlib import Path
+from datetime import datetime
 
 
 def generate_df_by_time_section(time_section="original", save_path=None):
@@ -23,7 +23,7 @@ def generate_df_by_time_section(time_section="original", save_path=None):
             "day",
             "week",
             "month",
-            "year"
+            "year".
 
     - save_path : str | pathlib.Path | None = None
 
@@ -84,11 +84,12 @@ def generate_df_by_time_section(time_section="original", save_path=None):
         df_result = df_result.drop(columns="timestamp_day").interpolate()
 
         # multiply by 12 to get the actual values by hour
+        # (the original values were for every 5 minutes)
         for col in df_result.columns[1:]:
             df_result[col] = df_result[col] * 12
 
         if time_section == "hour":
-            # use df_result as is
+            # return df_result as is
             pass
 
         elif time_section == "day":
@@ -135,7 +136,6 @@ def generate_df_by_time_section(time_section="original", save_path=None):
             # retrieve the timestamp for the mondays of every week
             df_tmp_2 = df_result[["year", "week", "timestamp"]].groupby(by=["year", "week"], as_index=False).min()
 
-            # print(len(df_tmp_1), len(df_tmp_2))
             df_tmp_1["timestamp"] = df_tmp_2["timestamp"]
 
             df_result = df_tmp_1[["timestamp", "year", "week", "coal", "nuclear", "wind", "hydro", "solar"]]
