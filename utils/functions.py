@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
-# from pathlib import Path
+from pathlib import Path
 from datetime import datetime
 
 
-def generate_df_by_time_section(time_section="original", save_path=None):
+def generate_df_by_time_section(time_section="hour", save_path=None):
     """
     This function returns the dataframe or energy usage
     with all the values grouped by the time section wanted
@@ -12,7 +12,7 @@ def generate_df_by_time_section(time_section="original", save_path=None):
 
     Parameters
     ----------
-    - time_section: str = "original"
+    - time_section: str = "hour"
 
         What time section the original DataFrame should be
         grouped by. If "original", returns the original unprocessed
@@ -40,12 +40,14 @@ def generate_df_by_time_section(time_section="original", save_path=None):
     assert time_section in ["original", "hour", "day", "week", "month", "year"], \
         f"{time_section} is not a valid value for time_section."
 
-    url = 'https://drive.google.com/file/d/14rWJ6OKc_aZbAcb6h220vQP0xfitLgHM/view?usp=sharing'
-    path = 'https://drive.google.com/uc?export=download&id='+url.split('/')[-2]
-    df_original = pd.read_csv(path, sep=";", parse_dates=[" timestamp"])
+    path_original_csv = Path(__file__).resolve().parent.parent / "data" / "original.csv"
+
+    # path = 'https://drive.google.com/uc?export=download&id=14rWJ6OKc_aZbAcb6h220vQP0xfitLgHM'
+    # df_original = pd.read_csv(path, sep=";", parse_dates=[" timestamp"])
+    df_original = pd.read_csv(path_original_csv, parse_dates=["timestamp"])
 
     # remove space from column names
-    df_original = df_original.rename(columns=lambda col: col[1:])
+    # df_original = df_original.rename(columns=lambda col: col[1:])
     # return df_original
 
     if time_section == "original":
