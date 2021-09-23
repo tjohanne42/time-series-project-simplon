@@ -167,7 +167,3 @@ def generate_df_by_time_section(time_section="hour", save_path=None):
         df_result.to_csv(path_or_buf=save_path, index=False)
 
     return df_result
-
-
-if __name__ == "__main__":
-    pass
