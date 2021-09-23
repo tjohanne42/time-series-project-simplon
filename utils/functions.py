@@ -87,8 +87,12 @@ def generate_df_by_time_section(time_section="hour", save_path=None):
         # add the missing hours to df_result, sort by timestamp and reset the index
         df_result = df_result.append(df_missing_hours).sort_values(by="timestamp").reset_index(drop=True)
 
-        # interpolation to fill the null values of the missing hours
-        df_result = df_result.drop(columns="timestamp_day").interpolate()
+        # drop the column "timestamp_day"
+        df_result = df_result.drop(columns="timestamp_day")
+
+        # interpolation on the energy columns to fill
+        # the null values of the missing hours
+        df_result.iloc[:, 1:] = df_result.iloc[:, 1:].interpolate(method="linear", axis="index")
 
         # multiply by 12 to get the actual values by hour
         # (the original values were for every 5 minutes)
