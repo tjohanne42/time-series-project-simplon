@@ -84,7 +84,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None):
                     missing_hours["timestamp"].append(datetime(day.year, day.month, day.day, hour, 0, 0))
         # create a DataFrame to hold the missing hours
         df_missing_hours = pd.DataFrame.from_dict(missing_hours)
-        # add the missing hours to df_result, sort and reset the index
+        # add the missing hours to df_result, sort by timestamp and reset the index
         df_result = df_result.append(df_missing_hours).sort_values(by="timestamp").reset_index(drop=True)
 
         # interpolation to fill the null values of the missing hours
@@ -96,6 +96,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None):
             df_result[col] = df_result[col] * 12
 
         if time_section == "hour":
+
             # return df_result as is
             pass
 
