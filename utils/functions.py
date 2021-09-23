@@ -121,12 +121,10 @@ def generate_df_by_time_section(time_section="hour", save_path=None):
 
             # add the column "year"
             def associate_week_with_year(row):
-                # if it's the 52nd week in january, then
-                # it's the 52nd week of the previous year
+                # if it's the 52nd week in january, then it's the 52nd week of the previous year
                 if row["week"] == 52 and row["timestamp"].month == 1:
                     year = row["timestamp"].year - 1
-                # if it's the 1st week in december, then
-                # it's the 1st week of the next year
+                # if it's the 1st week in december, then it's the 1st week of the next year
                 elif row["week"] == 1 and row["timestamp"].month == 12:
                     year = row["timestamp"].year + 1
                 else:
