@@ -124,12 +124,9 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
 
         # multiply by 12 to get the actual values by hour
         # (the original values were for every 5 minutes)
-        cols = df_result.columns[1:]
         if verbose:
-            print("multiply all values by 12 to get the actual values ...")
-            cols = tqdm(cols, "columns")
-        for col in cols:
-            df_result[col] = df_result[col] * 12
+            print("multiply all values by 12 to get the actual values by hour ...")
+        df_result.iloc[:, 1:] = df_result.iloc[:, 1:] * 12
 
         if time_section == "hour":
 
