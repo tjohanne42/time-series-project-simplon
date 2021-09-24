@@ -192,7 +192,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
 
             # multiply by 12 * 24 * 7 to get the actual values by week
             print("multiply all values by 12 * 24 * 7 to get the actual values by week ...") if verbose else ...
-            df_result.iloc[:, 1:] = df_result.iloc[:, 1:] * 12 * 24 * 7
+            df_result.iloc[:, 3:] = df_result.iloc[:, 3:] * 12 * 24 * 7
 
         elif time_section == "month":
 
@@ -211,7 +211,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             print("multiply all values by 12 * 24 * 7 to get the actual values by day ...") if verbose else ...
             df_result.iloc[:, 1:] = df_result.iloc[:, 1:] * 12 * 24
 
-            print("/!\\ THE DATAFRAMES CONTAINS THE MEAN VALUES PER DAY IN THE MONTH /!\\")
+            print("/!\\ THE DATAFRAME CONTAINS THE MEAN VALUES PER DAY IN THE MONTH /!\\")
 
         elif time_section == "year":
 
@@ -230,7 +230,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             print("multiply all values by 12 * 24 * 7 to get the actual values by day ...") if verbose else ...
             df_result.iloc[:, 1:] = df_result.iloc[:, 1:] * 12 * 24
 
-            print("/!\\ THE DATAFRAMES CONTAINS THE MEAN VALUES PER DAY IN THE YEAR /!\\")
+            print("/!\\ THE DATAFRAME CONTAINS THE MEAN VALUES PER DAY IN THE YEAR /!\\")
 
     # save the csv to save_path if provided
     if save_path:
