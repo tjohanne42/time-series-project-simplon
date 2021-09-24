@@ -72,8 +72,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             df_result["timestamp"] = df_result["timestamp"].map(lambda timestamp: timestamp.replace(second=0, minute=0))
 
         # get the mean values or every hour
-        if verbose:
-            print("get the mean values for every hour ...")
+        print("get the mean values for every hour ...") if verbose else ...
         df_result = df_result.groupby(["timestamp"], as_index=False).mean()
 
         # add null values to fill missing hours
@@ -90,7 +89,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
         days = df_result["timestamp_day"].unique()
         if verbose:
             print("look for missing recording hours ...")
-            days = tqdm(days, desc="days")
+            days = tqdm(days)
         # for each unique recording day ...
         for day in days:
             day = pd.to_datetime(day)
@@ -98,7 +97,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             df_tmp = df_result.loc[df_result["timestamp_day"] == day]
             # if there is less than 24 hours in that day ...
             if len(df_tmp) != 24:
-                # for every hours ...
+                # for every possible hours ...
                 for hour in range(24):
                     # if that hour is missing ...
                     if not np.any(df_tmp["timestamp"].dt.hour == hour):
@@ -107,25 +106,21 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
         # create a DataFrame to hold the missing hours
         df_missing_hours = pd.DataFrame.from_dict(missing_hours)
         # add the missing hours to df_result, sort by timestamp and reset the index
-        if verbose:
-            print("add the missing hours to df_result, sort by timestamp and reset index")
+        print("add the missing hours to df_result, sort by timestamp and reset index") if verbose else ...
         df_result = df_result.append(df_missing_hours).sort_values(by="timestamp").reset_index(drop=True)
 
         # drop the column "timestamp_day"
-        if verbose:
-            print("drop the column timestamp_day")
+        print("drop the column timestamp_day") if verbose else ...
         df_result = df_result.drop(columns="timestamp_day")
 
         # interpolation on the energy columns to fill
         # the null values of the missing hours
-        if verbose:
-            print("linear interpolation to fill the missing values ...")
+        print("linear interpolation to fill the missing values ...") if verbose else ...
         df_result.iloc[:, 1:] = df_result.iloc[:, 1:].interpolate(method="linear", axis="index")
 
         # multiply by 12 to get the actual values by hour
         # (the original values were for every 5 minutes)
-        if verbose:
-            print("multiply all values by 12 to get the actual values by hour ...")
+        print("multiply all values by 12 to get the actual values by hour ...") if verbose else ...
         df_result.iloc[:, 1:] = df_result.iloc[:, 1:] * 12
 
         if time_section == "hour":
@@ -143,8 +138,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
                 df_result["timestamp"] = df_result["timestamp"].map(lambda timestamp: timestamp.replace(hour=0))
 
             # get the sum of every hours for every days
-            if verbose:
-                print("get the sum of every hour for every day ...")
+            print("get the sum of every hour for every day ...") if verbose else ...
             df_result = df_result.groupby(["timestamp"], as_index=False).sum()
 
         elif time_section == "week":
@@ -157,13 +151,11 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
                 df_result["timestamp"] = df_result["timestamp"].map(lambda timestamp: timestamp.replace(hour=0))
 
             # get the sum of every hours for every days
-            if verbose:
-                print("get the sum of every hours for every days ...")
+            print("get the sum of every hours for every days ...") if verbose else ...
             df_result = df_result.groupby(["timestamp"], as_index=False).sum()
 
             # add the column "week"
-            if verbose:
-                print("add a column week")
+            print("add a column week") if verbose else ...
             df_result["week"] = df_result["timestamp"].map(lambda timestamp: timestamp.week)
 
             # add the column "year"
@@ -184,13 +176,11 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
                 df_result["year"] = df_result.apply(associate_week_with_year, axis=1)
 
             # get the sum of every days for every weeks
-            if verbose:
-                print("get the sum of every day for every week ...")
+            print("get the sum of every day for every week ...") if verbose else ...
             df_tmp_1 = df_result.groupby(by=["year","week"], as_index=False).sum()
 
             # retrieve the timestamps for the mondays of every week
-            if verbose:
-                print("retrive the timestamp of the first day of each week ...")
+            print("retrive the timestamp of the first day of each week ...") if verbose else ...
             df_tmp_2 = df_result[["year", "week", "timestamp"]].groupby(by=["year", "week"], as_index=False).min()
 
             # add the timestamps to df_tmp_1
@@ -209,8 +199,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
                 df_result["timestamp"] = df_result["timestamp"].map(lambda timestamp: timestamp.replace(hour=0, day=1))
 
             # get the sum of every hours for every months
-            if verbose:
-                print("get the sum of every hour for every month ...")
+            print("get the sum of every hour for every month ...") if verbose else ...
             df_result = df_result.groupby(["timestamp"], as_index=False).sum()
 
         elif time_section == "year":
@@ -223,17 +212,14 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
                 df_result["timestamp"] = df_result["timestamp"].map(lambda timestamp: timestamp.replace(hour=0, day=1, month=1))
 
             # get the sum of every hours for every years
-            if verbose:
-                print("get the sum of every hour for every year ...")
+            print("get the sum of every hour for every year ...") if verbose else ...
             df_result = df_result.groupby(["timestamp"], as_index=False).sum()
 
     # save the csv to save_path if provided
     if save_path:
-        if verbose:
-            print(f"saving file to {str(save_path)}")
+        print(f"saving file to {str(save_path)}") if verbose else ...
         df_result.to_csv(path_or_buf=save_path, index=False)
 
-    if verbose:
-        print("done")
+    print("done") if verbose else ...
 
     return df_result
