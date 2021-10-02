@@ -8,7 +8,7 @@ tqdm.pandas()
 
 def generate_df_by_time_section(time_section="hour", save_path=None, verbose=False):
     """
-    This function returns the dataframe or energy usage
+    This function returns the dataframe of energy usage
     with all the values grouped by the time section wanted
     (hour, day, week, month, year).
 
@@ -34,7 +34,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
 
     - verbose: bool = False
 
-        Set to True if you want some feedback.
+        Set to True for some feedback.
 
     Returns
     -------
@@ -43,8 +43,8 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
         The DataFrame resulting from the groupby.
     """
 
-    assert time_section in ["original", "hour", "day", "week", "month", "year"], \
-        f"{time_section} is not a valid value for time_section."
+    assert_err_msg = f"{time_section} is not a valid value for time_section."
+    assert time_section in ["original", "hour", "day", "week", "month", "year"], assert_err_msg
 
     path_original_csv = Path(__file__).resolve().parent.parent / "data" / "energy_use_in_the_UK_original.csv"
 
@@ -88,6 +88,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             # dictionary to store the missing hours
             missing_hours = {"timestamp": []}
             # place in "days" the list of all the unique recording days
+            # (no recording day is missing from the first to the last one)
             days = df_result["timestamp_day"].unique()
             if verbose:
                 print("look for missing recording hours ...")
@@ -99,11 +100,11 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
                 df_tmp = df_result.loc[df_result["timestamp_day"] == day]
                 # if there is less than 24 hours in that day ...
                 if len(df_tmp) != 24:
-                    # for every possible hours ...             ##### TOCHANGE
+                    # for every possible hours ...
                     for hour in range(24):
                         # if that hour is missing ...
                         if not np.any(df_tmp["timestamp"].dt.hour == hour):
-                            # add he missing hour to "missing hours"
+                            # add the missing hour to "missing hours"
                             missing_hours["timestamp"].append(datetime(day.year, day.month, day.day, hour, 0, 0))
             # create a DataFrame to hold the missing hours
             df_missing_hours = pd.DataFrame.from_dict(missing_hours)
@@ -134,7 +135,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             else:
                 df_result["timestamp"] = df_result["timestamp"].map(lambda timestamp: timestamp.replace(second=0, minute=0, hour=0))
 
-            # get the meant values or every day
+            # get the mean values of every day
             print("get the mean values for every day ...") if verbose else ...
             df_result = df_result.groupby(["timestamp"], as_index=False).mean()
 
@@ -176,7 +177,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             else:
                 df_result["year"] = df_result.apply(associate_week_with_year, axis=1)
 
-            # get the mean of every days for every weeks
+            # get the mean of every day for every week
             print("get the mean of every day for every week ...") if verbose else ...
             df_tmp_1 = df_result.groupby(by=["year","week"], as_index=False).mean()
 
@@ -208,7 +209,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             df_result = df_result.groupby(["timestamp"], as_index=False).mean()
 
             # multiply by 12 * 24 to get the actual values by day
-            print("multiply all values by 12 * 24 * 7 to get the actual values by day ...") if verbose else ...
+            print("multiply all values by 12 * 24 to get the actual values by day ...") if verbose else ...
             df_result.iloc[:, 1:] = df_result.iloc[:, 1:] * 12 * 24
 
             print("/!\\ THE DATAFRAME CONTAINS THE MEAN VALUES PER DAY IN THE MONTH /!\\")
@@ -223,11 +224,11 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
                 df_result["timestamp"] = df_result["timestamp"].map(lambda timestamp: timestamp.replace(second=0, minute=0, hour=0, day=1, month=1))
 
             # get the mean of every hours for every months
-            print("get the mean of every hour for every YEAR ...") if verbose else ...
+            print("get the mean of every hour for every year ...") if verbose else ...
             df_result = df_result.groupby(["timestamp"], as_index=False).mean()
 
             # multiply by 12 * 24 to get the actual values by day
-            print("multiply all values by 12 * 24 * 7 to get the actual values by day ...") if verbose else ...
+            print("multiply all values by 12 * 24 to get the actual values by day ...") if verbose else ...
             df_result.iloc[:, 1:] = df_result.iloc[:, 1:] * 12 * 24
 
             print("/!\\ THE DATAFRAME CONTAINS THE MEAN VALUES PER DAY IN THE YEAR /!\\")
