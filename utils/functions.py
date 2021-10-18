@@ -56,6 +56,11 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
     # df_original = df_original.rename(columns=lambda col: col[1:])
     # return df_original
 
+    # replace ouliers in "solar" values with interpolation
+    print("replace outliers in 'solar' values with interpolation ...") if verbose else ...
+    df_original.loc[576229:576230, "solar"] = [np.nan, np.nan]
+    df_original.loc[:, "solar"] = df_original.loc[:, "solar"].interpolate(method="linear", axis="index")
+
     if time_section == "original":
         df_result = df_original
 
