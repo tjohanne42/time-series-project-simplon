@@ -73,7 +73,7 @@ def generate_df_by_time_section(time_section="hour", save_path=None, verbose=Fal
             else:
                 df_result["timestamp"] = df_result["timestamp"].map(lambda timestamp: timestamp.replace(second=0, minute=0))
 
-            # get the meant values or every hour
+            # get the mean values for every hour
             print("get the mean values for every hour ...") if verbose else ...
             df_result = df_result.groupby(["timestamp"], as_index=False).mean()
 
